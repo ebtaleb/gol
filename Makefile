@@ -2,9 +2,9 @@ all: main
 
 
 main: main.c
-	gcc -o $@ $^ -lSDL
+	gcc -o $@ $^ -lSDL2
 
 .PHONY: clean
 
 clean:
-	rm main *.o
+	rm main
