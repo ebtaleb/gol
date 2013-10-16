@@ -2,7 +2,7 @@ all: main
 
 
 main: main.c
-	gcc -o $@ $^ -lSDL2
+	gcc -g -o $@ $^ -lSDL2
 
 .PHONY: clean
 
