@@ -92,6 +92,10 @@ int main(int argc, char *argv[])
         if (event.type == SDL_QUIT) {
             break;
         }
+
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
+            break;
+        }
     }
 
     teardown(window, renderer);
