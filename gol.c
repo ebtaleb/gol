@@ -20,7 +20,7 @@ void init(SDL_Window **w, SDL_Renderer **r)
         exit(EXIT_FAILURE);
     }
 
-    *w = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+    *w = SDL_CreateWindow( "Game of Life", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
     if( *w == NULL ) {
         fprintf(stderr, "SDL_CreateWindow failure : %s\n :(\n", SDL_GetError());
         exit(EXIT_FAILURE);

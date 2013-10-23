@@ -1,10 +1,10 @@
-all: main
+all: gol
 
 
-main: main.c
+gol: gol.c
 	gcc -g -o $@ $^ -lSDL2
 
 .PHONY: clean
 
 clean:
-	rm main
+	rm gol
