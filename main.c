@@ -13,49 +13,52 @@ void sig_handler(int signo)
     }
 }
 
-void init(SDL_Window **w, SDL_Surface **s)
+void init(SDL_Window **w, SDL_Renderer **r)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL_Init failure : %s\n :(\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
-    //Create window
     *w = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
     if( *w == NULL ) {
         fprintf(stderr, "SDL_CreateWindow failure : %s\n :(\n", SDL_GetError());
         exit(EXIT_FAILURE);
     }
 
-    //Get window surface
-    *s = SDL_GetWindowSurface(*w);
+    *r = SDL_CreateRenderer(*w, -1, SDL_RENDERER_ACCELERATED);
+    if( *r == NULL ) {
+        fprintf(stderr, "SDL_CreateRenderer failure : %s\n :(\n", SDL_GetError());
+        exit(EXIT_FAILURE);
+    }
 }
 
-void teardown(SDL_Window *w, SDL_Surface *s)
+void teardown(SDL_Window *w, SDL_Renderer *r)
 {
-	//Deallocate surface
-	SDL_FreeSurface(s);
-	s = NULL;
+    SDL_DestroyRenderer(r);
+	r = NULL;
 
-	//Destroy window
 	SDL_DestroyWindow(w);
 	w = NULL;
 
-	//Quit SDL subsystems
 	SDL_Quit();
 }
 
 int main(int argc, char *argv[])
 {
     SDL_Window *window = NULL;
-    SDL_Surface *surface = NULL;
+    SDL_Renderer *renderer = NULL;
     SDL_Event event;
 
     signal(SIGINT, sig_handler);
 
-    init(&window, &surface);
-    SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0xFF, 0xFF, 0xFF));
-    SDL_UpdateWindowSurface(window);
+    init(&window, &renderer);
+
+    SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+    SDL_RenderClear(renderer);
+    SDL_RenderDrawLine(renderer, 1, 240, 639, 240);
+    SDL_RenderPresent(renderer);
+
     SDL_Delay(2000);
 
     while (1) {
@@ -66,7 +69,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    teardown(window, surface);
+    teardown(window, renderer);
 
     return EXIT_SUCCESS;
 }
