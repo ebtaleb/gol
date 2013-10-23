@@ -36,12 +36,12 @@ void init(SDL_Window **w, SDL_Renderer **r)
 void teardown(SDL_Window *w, SDL_Renderer *r)
 {
     SDL_DestroyRenderer(r);
-	r = NULL;
+    r = NULL;
 
-	SDL_DestroyWindow(w);
-	w = NULL;
+    SDL_DestroyWindow(w);
+    w = NULL;
 
-	SDL_Quit();
+    SDL_Quit();
 }
 
 int main(int argc, char *argv[])
