@@ -50,13 +50,19 @@ int main(int argc, char *argv[])
     SDL_Renderer *renderer = NULL;
     SDL_Event event;
 
+    SDL_Rect r1 = {0, 0, 20, 20};
+    SDL_Rect r2 = {21, 0, 20, 20};
+    SDL_Rect r3 = {63, 0, 20, 20};
+
     signal(SIGINT, sig_handler);
 
     init(&window, &renderer);
 
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(renderer);
-    SDL_RenderDrawLine(renderer, 1, 240, 639, 240);
+    SDL_RenderFillRect(renderer, &r1);
+    SDL_RenderFillRect(renderer, &r2);
+    SDL_RenderFillRect(renderer, &r3);
     SDL_RenderPresent(renderer);
 
     SDL_Delay(2000);
