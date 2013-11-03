@@ -50,9 +50,28 @@ int main(int argc, char *argv[])
     SDL_Renderer *renderer = NULL;
     SDL_Event event;
 
-    SDL_Rect r1 = {0, 0, 20, 20};
-    SDL_Rect r2 = {21, 0, 20, 20};
-    SDL_Rect r3 = {63, 0, 20, 20};
+    int numcases_x = SCREEN_WIDTH / 21;
+    int numcases_y = SCREEN_HEIGHT / 21;
+    SDL_Rect *rect_array[numcases_y][numcases_x];
+    int i = 0;
+    int j = 0;
+    int x = 0;
+    int y = 0;
+
+    Uint8 color[4] = {0, 0, 0, 0};
+
+    for (i = 0; i < numcases_y; i++) {
+        for (j = 0; j < numcases_x; j++) {
+            rect_array[i][j] = (SDL_Rect *)malloc(sizeof(SDL_Rect));
+            rect_array[i][j]->x = x;
+            rect_array[i][j]->y = y;
+            rect_array[i][j]->h = 20;
+            rect_array[i][j]->w = 20;
+            x += 21;
+        }
+        y += 21;
+        x = 0;
+    }
 
     signal(SIGINT, sig_handler);
 
@@ -60,18 +79,41 @@ int main(int argc, char *argv[])
 
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(renderer);
-    SDL_RenderFillRect(renderer, &r1);
-    SDL_RenderFillRect(renderer, &r2);
-    SDL_RenderFillRect(renderer, &r3);
-    SDL_RenderPresent(renderer);
 
-    SDL_Delay(2000);
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
+
+    for (i = 0; i < numcases_y; i++) {
+        for (j = 0; j < numcases_x; j++) {
+            SDL_RenderFillRect(renderer, rect_array[i][j]);
+        }
+    }
+
+    SDL_RenderPresent(renderer);
 
     while (1) {
         SDL_WaitEvent(&event);
 
         if (event.type == SDL_QUIT) {
             break;
+        }
+
+        if (event.type == SDL_MOUSEBUTTONDOWN) {
+            x = event.button.x / 21;
+            y = event.button.y / 21;
+
+            if (x < numcases_x && y < numcases_y) {
+
+                SDL_GetRenderDrawColor(renderer, &color[0], &color[1], &color[2], &color[3]);
+
+                if (color[0] == 0xFF && color[1] == 0xFF && color[2] == 0xFF && color[3] == 0x00) {
+                    SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0x00);
+                } else if (color[0] == 0xFF && color[1] == 0x00 && color[2] == 0x00 && color[3] == 0x00) {
+                    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
+                }
+
+                SDL_RenderFillRect(renderer, rect_array[y][x]);
+                SDL_RenderPresent(renderer);
+            }
         }
     }
 
