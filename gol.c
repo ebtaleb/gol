@@ -58,6 +58,8 @@ int main(int argc, char *argv[])
     int x = 0;
     int y = 0;
 
+    Uint8 color[4] = {0, 0, 0, 0};
+
     for (i = 0; i < numcases_y; i++) {
         for (j = 0; j < numcases_x; j++) {
             rect_array[i][j] = (SDL_Rect *)malloc(sizeof(SDL_Rect));
@@ -77,6 +79,8 @@ int main(int argc, char *argv[])
 
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(renderer);
+
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
 
     for (i = 0; i < numcases_y; i++) {
         for (j = 0; j < numcases_x; j++) {
@@ -98,7 +102,15 @@ int main(int argc, char *argv[])
             y = event.button.y / 21;
 
             if (x < numcases_x && y < numcases_y) {
-                SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0x00);
+
+                SDL_GetRenderDrawColor(renderer, &color[0], &color[1], &color[2], &color[3]);
+
+                if (color[0] == 0xFF && color[1] == 0xFF && color[2] == 0xFF && color[3] == 0x00) {
+                    SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0x00);
+                } else if (color[0] == 0xFF && color[1] == 0x00 && color[2] == 0x00 && color[3] == 0x00) {
+                    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
+                }
+
                 SDL_RenderFillRect(renderer, rect_array[y][x]);
                 SDL_RenderPresent(renderer);
             }
