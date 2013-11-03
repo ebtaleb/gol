@@ -94,7 +94,14 @@ int main(int argc, char *argv[])
         }
 
         if (event.type == SDL_MOUSEBUTTONDOWN) {
-            break;
+            x = event.button.x / 21;
+            y = event.button.y / 21;
+
+            if (x < numcases_x && y < numcases_y) {
+                SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0x00);
+                SDL_RenderFillRect(renderer, rect_array[y][x]);
+                SDL_RenderPresent(renderer);
+            }
         }
     }
 
