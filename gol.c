@@ -13,7 +13,7 @@ void sig_handler(int signo)
     }
 }
 
-void init(SDL_Window **w, SDL_Renderer **r)
+void init_display(SDL_Window **w, SDL_Renderer **r)
 {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         fprintf(stderr, "SDL_Init failure : %s\n :(\n", SDL_GetError());
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 
     signal(SIGINT, sig_handler);
 
-    init(&window, &renderer);
+    init_display(&window, &renderer);
 
     SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(renderer);
