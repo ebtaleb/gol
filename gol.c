@@ -109,12 +109,12 @@ int main(int argc, char *argv[])
 
             if (x < numcases_x && y < numcases_y) {
 
-                SDL_GetRenderDrawColor(renderer, &color[0], &color[1], &color[2], &color[3]);
-
-                if (color[0] == 0xFF && color[1] == 0xFF && color[2] == 0xFF && color[3] == 0x00) {
+                if (gol_array[y][x] == 0) {
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0x00);
-                } else if (color[0] == 0xFF && color[1] == 0x00 && color[2] == 0x00 && color[3] == 0x00) {
+                    gol_array[y][x] = 1;
+                } else {
                     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
+                    gol_array[y][x] = 0;
                 }
 
                 SDL_RenderFillRect(renderer, rect_array[y][x]);
