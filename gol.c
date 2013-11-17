@@ -58,6 +58,12 @@ int main(int argc, char *argv[])
     int x = 0;
     int y = 0;
 
+    int **gol_array = (int **)malloc(sizeof(numcases_y));
+    for (i = 0; i < numcases_x; i++) {
+        gol_array[i] = (int *)malloc(sizeof(int)*numcases_x);
+        memset(gol_array[i], 0, sizeof(int)*numcases_x);
+    }
+
     Uint8 color[4] = {0, 0, 0, 0};
 
     for (i = 0; i < numcases_y; i++) {
