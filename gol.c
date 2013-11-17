@@ -78,6 +78,17 @@ void init_grid(Point *numcases, SDL_Renderer *renderer, SDL_Rect ****rect_array)
     SDL_RenderPresent(renderer);
 }
 
+void init_gol_array(int ***gol, Point *numcases)
+{
+    int i;
+
+    *gol = (int **)malloc(numcases->y * sizeof(int *));
+    for (i = 0; i < numcases->x; i++) {
+        (*gol)[i] = (int *)malloc(sizeof(int)*numcases->x);
+        memset((*gol)[i], 0, sizeof(int)*numcases->x);
+    }
+}
+
 void update_grid(int cursor_coord_x, int cursor_coord_y, Point *numcases, SDL_Renderer *renderer, int ***gol_array, SDL_Rect ****rect_array)
 {
     int x = cursor_coord_x / 21;
@@ -116,16 +127,8 @@ int main(int argc, char *argv[])
     SDL_Event event;
     Point numcases = {SCREEN_WIDTH / 21, SCREEN_HEIGHT / 21};
 
-    int numcases_x = SCREEN_WIDTH / 21;
-    int numcases_y = SCREEN_HEIGHT / 21;
     SDL_Rect ***rect_array = NULL;
-    int i = 0;
-
-    int **gol_array = (int **)malloc(sizeof(numcases_y));
-    for (i = 0; i < numcases_x; i++) {
-        gol_array[i] = (int *)malloc(sizeof(int)*numcases_x);
-        memset(gol_array[i], 0, sizeof(int)*numcases_x);
-    }
+    int **gol_array = NULL;
 
     Uint8 color[4] = {0, 0, 0, 0};
 
@@ -133,6 +136,7 @@ int main(int argc, char *argv[])
 
     init_display(&window, &renderer);
     init_grid(&numcases, renderer, &rect_array);
+    init_gol_array(&gol_array, &numcases);
 
     while (1) {
         SDL_WaitEvent(&event);
