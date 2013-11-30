@@ -78,30 +78,26 @@ void init_grid(Point *numcases, SDL_Renderer *renderer, SDL_Rect ****rect_array)
     SDL_RenderPresent(renderer);
 }
 
-void init_gol_array(int ***gol, Point *numcases)
+void init_gol_array(int **gol, Point *numcases)
 {
-    int i;
-
-    *gol = (int **)malloc(numcases->y * sizeof(int *));
-    for (i = 0; i < numcases->x; i++) {
-        (*gol)[i] = (int *)malloc(sizeof(int)*numcases->x);
-        memset((*gol)[i], 0, sizeof(int)*numcases->x);
-    }
+    *gol = (int *)malloc(numcases->y * numcases->x * sizeof(int));
+    memset(*gol, 0, sizeof(int)*numcases->x*numcases->y);
 }
 
-void update_grid(int cursor_coord_x, int cursor_coord_y, Point *numcases, SDL_Renderer *renderer, int ***gol_array, SDL_Rect ****rect_array)
+void update_grid(int cursor_coord_x, int cursor_coord_y, Point *numcases, SDL_Renderer *renderer, int *gol_array, SDL_Rect ****rect_array)
 {
     int x = cursor_coord_x / 21;
     int y = cursor_coord_y / 21;
 
     if (x < numcases->x && y < numcases->y) {
 
-        if ((*gol_array)[y][x] == 0) {
+        int index = y*numcases->x + x;
+        if (gol_array[index] == 0) {
             SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0x00);
-            (*gol_array)[y][x] = 1;
+            gol_array[index] = 1;
         } else {
             SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
-            (*gol_array)[y][x] = 0;
+            gol_array[index] = 0;
         }
 
         SDL_RenderFillRect(renderer, (*rect_array)[y][x]);
@@ -128,7 +124,7 @@ int main(int argc, char *argv[])
     Point numcases = {SCREEN_WIDTH / 21, SCREEN_HEIGHT / 21};
 
     SDL_Rect ***rect_array = NULL;
-    int **gol_array = NULL;
+    int *gol_array = NULL;
 
     Uint8 color[4] = {0, 0, 0, 0};
 
@@ -146,7 +142,7 @@ int main(int argc, char *argv[])
         }
 
         if (event.type == SDL_MOUSEBUTTONDOWN) {
-            update_grid(event.button.x, event.button.y, &numcases, renderer, &gol_array, &rect_array);
+            update_grid(event.button.x, event.button.y, &numcases, renderer, gol_array, &rect_array);
         }
     }
 
