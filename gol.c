@@ -84,10 +84,10 @@ void init_gol_array(int **gol, Point *numcases)
     memset(*gol, 0, sizeof(int)*numcases->x*numcases->y);
 }
 
-void update_grid(int cursor_coord_x, int cursor_coord_y, Point *numcases, SDL_Renderer *renderer, int *gol_array, SDL_Rect ****rect_array)
+void update_grid(Point *cursor, Point *numcases, SDL_Renderer *renderer, int *gol_array, SDL_Rect ****rect_array)
 {
-    int x = cursor_coord_x / 21;
-    int y = cursor_coord_y / 21;
+    int x = cursor->x / 21;
+    int y = cursor->y / 21;
 
     if (x < numcases->x && y < numcases->y) {
 
@@ -116,17 +116,16 @@ void teardown(SDL_Window *w, SDL_Renderer *r)
     SDL_Quit();
 }
 
-int main(int argc, char *argv[])
+int main()
 {
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
     SDL_Event event;
     Point numcases = {SCREEN_WIDTH / 21, SCREEN_HEIGHT / 21};
+    Point cursor_coord = {0, 0};
 
     SDL_Rect ***rect_array = NULL;
     int *gol_array = NULL;
-
-    Uint8 color[4] = {0, 0, 0, 0};
 
     signal(SIGINT, sig_handler);
 
@@ -142,7 +141,9 @@ int main(int argc, char *argv[])
         }
 
         if (event.type == SDL_MOUSEBUTTONDOWN) {
-            update_grid(event.button.x, event.button.y, &numcases, renderer, gol_array, &rect_array);
+            cursor_coord.x = event.button.x;
+            cursor_coord.y = event.button.y;
+            update_grid(&cursor_coord, &numcases, renderer, gol_array, &rect_array);
         }
     }
 
