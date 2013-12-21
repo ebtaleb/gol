@@ -8,4 +8,4 @@ gol: gol.c
 .PHONY: clean
 
 clean:
-	rm gol
+	/bin/rm gol
