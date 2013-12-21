@@ -47,7 +47,7 @@ void init_grid(Point *numcases, SDL_Renderer *renderer, SDL_Rect ****rect_array)
 
     *rect_array = (SDL_Rect ***)malloc(sizeof(SDL_Rect **)*numcases->y);
 
-    for (i = 0; i < numcases->x; i++) {
+    for (i = 0; i < numcases->y; i++) {
         (*rect_array)[i] = (SDL_Rect **)malloc(sizeof(SDL_Rect *)*numcases->x);
     }
 
