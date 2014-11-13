@@ -1,10 +1,11 @@
+FLAGS=-Wall -Wextra -Werror -pedantic -g -o
+
 all: gol
 
-
 gol: gol.c
-	gcc -g -o $@ $^ -lSDL2
+	gcc $(FLAGS) $@ $^ -lSDL2 -std=gnu99
 
 .PHONY: clean
 
 clean:
-	rm gol
+	/bin/rm gol

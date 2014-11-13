@@ -47,7 +47,7 @@ void init_grid(Point *numcases, SDL_Renderer *renderer, SDL_Rect ****rect_array)
 
     *rect_array = (SDL_Rect ***)malloc(sizeof(SDL_Rect **)*numcases->y);
 
-    for (i = 0; i < numcases->x; i++) {
+    for (i = 0; i < numcases->y; i++) {
         (*rect_array)[i] = (SDL_Rect **)malloc(sizeof(SDL_Rect *)*numcases->x);
     }
 
@@ -84,10 +84,10 @@ void init_gol_array(int **gol, Point *numcases)
     memset(*gol, 0, sizeof(int)*numcases->x*numcases->y);
 }
 
-void update_grid(int cursor_coord_x, int cursor_coord_y, Point *numcases, SDL_Renderer *renderer, int *gol_array, SDL_Rect ****rect_array)
+void set_cell_on_click(Point *cursor, Point *numcases, SDL_Renderer *renderer, int *gol_array, SDL_Rect ****rect_array)
 {
-    int x = cursor_coord_x / 21;
-    int y = cursor_coord_y / 21;
+    int x = cursor->x / 21;
+    int y = cursor->y / 21;
 
     if (x < numcases->x && y < numcases->y) {
 
@@ -105,6 +105,63 @@ void update_grid(int cursor_coord_x, int cursor_coord_y, Point *numcases, SDL_Re
     }
 }
 
+void set_cell(Point *coords, Point *numcases, SDL_Renderer *renderer, int **gol_array, SDL_Rect ****rect_array)
+{
+    int x = coords->x;
+    int y = coords->y;
+
+    if (x < numcases->x && y < numcases->y) {
+
+        int index = y*numcases->x + x;
+        if (*gol_array[index] == 0) {
+            SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0x00);
+        } else {
+            SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 0x00);
+        }
+
+        SDL_RenderFillRect(renderer, (*rect_array)[y][x]);
+        SDL_RenderPresent(renderer);
+    }
+}
+
+void gol_logic(int x, int y, int **tab, Point *dim)
+{
+    int count = 0;
+    int index = y*dim->y + x;
+
+    count += *tab[index-1] + *tab[index+1];
+    count += *tab[index - dim->x - 1] + *tab[index - dim->x] + *tab[index - dim->x + 1];
+    count += *tab[index + dim->x - 1] + *tab[index + dim->x] + *tab[index + dim->x + 1];
+
+    if (*tab[index]) {
+        if (count < 2 || count > 3) {
+            *tab[index] = 0;
+        } else {
+            *tab[index] = 1;
+        }
+    } else {
+        if (count == 3) {
+            *tab[index] = 1;
+        }
+    }
+}
+
+void update_grid(Point *numcases, int **tab, SDL_Renderer *renderer, SDL_Rect ****rect_array)
+{
+    Point coord = {0, 0};
+    int i, j;
+
+    for (i = 0; i < numcases->x; i++) {
+        for (j = 0; j < numcases->y; j++) {
+            coord.x = i;
+            coord.y = j;
+            gol_logic(i, j, tab, numcases);
+            set_cell(&coord, numcases, renderer, tab, rect_array);
+        }
+    }
+
+}
+
 void teardown(SDL_Window *w, SDL_Renderer *r)
 {
     SDL_DestroyRenderer(r);
@@ -116,17 +173,17 @@ void teardown(SDL_Window *w, SDL_Renderer *r)
     SDL_Quit();
 }
 
-int main(int argc, char *argv[])
+int main()
 {
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
     SDL_Event event;
     Point numcases = {SCREEN_WIDTH / 21, SCREEN_HEIGHT / 21};
+    Point cursor_coord = {0, 0};
+    int switch_on = 0;
 
     SDL_Rect ***rect_array = NULL;
     int *gol_array = NULL;
-
-    Uint8 color[4] = {0, 0, 0, 0};
 
     signal(SIGINT, sig_handler);
 
@@ -134,15 +191,38 @@ int main(int argc, char *argv[])
     init_grid(&numcases, renderer, &rect_array);
     init_gol_array(&gol_array, &numcases);
 
-    while (1) {
-        SDL_WaitEvent(&event);
+    SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
+
+    while (SDL_WaitEvent(&event)) {
+
+        if (event.type == SDL_KEYDOWN) {
+            if (event.key.keysym.sym == SDLK_SPACE) {
+
+                switch (switch_on) {
+                    case 0: switch_on = 1;
+                            SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_ENABLE);
+                            break;
+                    case 1: switch_on = 0;
+                            SDL_EventState(SDL_MOUSEBUTTONDOWN, SDL_IGNORE);
+                            break;
+                }
+            }
+
+
+            if (event.key.keysym.sym == SDLK_q) {
+                break;
+            }
+        }
+
 
         if (event.type == SDL_QUIT) {
             break;
         }
 
         if (event.type == SDL_MOUSEBUTTONDOWN) {
-            update_grid(event.button.x, event.button.y, &numcases, renderer, gol_array, &rect_array);
+            cursor_coord.x = event.button.x;
+            cursor_coord.y = event.button.y;
+            set_cell_on_click(&cursor_coord, &numcases, renderer, gol_array, &rect_array);
         }
     }
 
